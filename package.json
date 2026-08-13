@@ -1,0 +1,13 @@
+{
+  "name": "xingyun-skills",
+  "version": "1.0.0",
+  "description": "魔珐星云 AI Agent Skills 仓库",
+  "private": true,
+  "keywords": [
+    "agent-skills",
+    "xingyun",
+    "digital-human",
+    "xmovavatar"
+  ],
+  "license": "MIT"
+}
