@@ -1,11 +1,11 @@
 ---
 name: xingyun-sdk
-description: 魔法星云（魔珐星云）AI具身交互智能体 SDK 开发助手。当用户提到数字人、星云、XmovAvatar、SSML、WebGL渲染、具身驱动、虚拟人、数字人SDK、星云平台、行走动画、关键动作、情绪表情、Widget组件、隐身模式、客户端打断、或任何与魔珐星云3D数字人开发相关的内容时，必须使用此技能。即使用户只是想了解如何接入、如何配置、如何调试数字人应用，也应触发。
+description: 魔珐星云AI具身交互智能体 SDK 开发助手。当用户提到数字人、星云、XmovAvatar、SSML、WebGL渲染、具身驱动、虚拟人、数字人SDK、星云平台、行走动画、关键动作、情绪表情、Widget组件、隐身模式、客户端打断、或任何与魔珐星云3D数字人开发相关的内容时，必须使用此技能。即使用户只是想了解如何接入、如何配置、如何调试数字人应用，也应触发。
 compatibility: Designed for Claude Code and similar products
 license: MIT
 ---
 
-# 魔法星云 AI 具身交互智能体 SDK 开发助手
+# 魔珐星云 AI 具身交互智能体 SDK 开发助手
 
 本技能为魔珐星云 3D 数字人 Web SDK（XmovAvatar）的开发提供文档支持。
 

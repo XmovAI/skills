@@ -1,4 +1,4 @@
-# 魔法星云 SDK Skills
+# 魔珐星云 SDK Skills
 
 本仓库收集了魔珐星云相关 AI Agent 技能（Skills），支持通过 [Agent Skills](https://github.com/agentskills/agentskills)安装使用。
 
@@ -6,7 +6,7 @@
 
 | 技能 | 描述 |
 |------|------|
-| [xingyun-sdk](./skills/xingyun-sdk/SKILL.md) | 魔法星云 AI 具身交互智能体 SDK 开发助手 — 为魔珐星云 3D 数字人 Web SDK（XmovAvatar）的开发提供文档支持 |
+| [xingyun-sdk](./skills/xingyun-sdk/SKILL.md) | 魔珐星云 AI 具身交互智能体 SDK 开发助手 — 为魔珐星云 3D 数字人 Web SDK（XmovAvatar）的开发提供文档支持 |
 
 ## 命令行(CLI)安装
 
