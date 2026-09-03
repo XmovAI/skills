@@ -6,7 +6,7 @@
 
 | 技能 | 描述 |
 |------|------|
-| [xingyun-sdk](./skills/xingyun-sdk/SKILL.md) | 魔珐星云 AI 具身交互智能体 SDK 开发助手 — 为魔珐星云 3D 数字人 Web SDK（XmovAvatar）的开发提供文档支持 |
+| [xingyun-sdk](./skills/xingyun-sdk/SKILL.md) | 魔珐星云具身交互智能体 Web SDK 开发助手 — 覆盖端到端 SDK（`XingyunAvatarAgent`，入口 `@xmov/avatar/agent`，ASR + LLM 闭环）与旧版渲染 SDK（`XmovAvatar`，入口 `@xmov/avatar`），内置两套接入文档（`e2esdk-docs` / `sdk-docs`）及升级迁移指南 |
 
 ## 命令行(CLI)安装
 
