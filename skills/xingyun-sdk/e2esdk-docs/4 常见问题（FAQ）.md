@@ -16,9 +16,9 @@ A: 这几项均为接入前必须拿到的配置，来源如下：
 
 `gatewayServer` 为固定值，直接填写上述地址即可，无需按环境替换。`asr_config`、`brain_config` 为空对象时不会随请求发送，按项目方给定的字段填写即可。
 
-## Q: 数字人不显示，或者容器塌陷成一根线/一块空白怎么办？
+## Q: 具身智能体不显示，或者容器塌陷成一根线/一块空白怎么办？
 
-A: 数字人 Canvas 会填满你传入的容器，但容器**必须有明确的高度**。塌陷最常见原因是容器高度为 0（父元素未设高度、使用 100% 高度但上级无确定高度、或用了未生效的视口单位）。请给容器显式指定宽高，并让宽高为具体像素或有效的视口单位：
+A: 具身智能体 Canvas 会填满你传入的容器，但容器**必须有明确的高度**。塌陷最常见原因是容器高度为 0（父元素未设高度、使用 100% 高度但上级无确定高度、或用了未生效的视口单位）。请给容器显式指定宽高，并让宽高为具体像素或有效的视口单位：
 
 ```html
 <div id="agent-avatar"></div>
@@ -91,7 +91,7 @@ A: 分两层判断，不要用 `ask()` 的返回值判断：
 
 - `ask(text)` 返回 `Promise<void>`，仅表示消息已写入，**不代表播报完成**。
 - 文本生成（LLM）完成：监听 `agentCallbacks.onLLMResponse`，先收到多条 `{ event: 'chunk' }`，最后一条 `{ event: 'done', usage: ... }` 表示大模型输出完毕。
-- 播报（数字人说话）完成：监听 `agentCallbacks.onSpeakStateChange` 或 `agentCallbacks.onConversationChange`，当 `event.state === 'completed'` 表示本轮播报结束（`'failed'` 为失败，`'interrupted'` 为被打断）。
+- 播报（具身智能体说话）完成：监听 `agentCallbacks.onSpeakStateChange` 或 `agentCallbacks.onConversationChange`，当 `event.state === 'completed'` 表示本轮播报结束（`'failed'` 为失败，`'interrupted'` 为被打断）。
 
 ```javascript
 const agent = new XingyunAvatarAgent({
@@ -108,7 +108,7 @@ const agent = new XingyunAvatarAgent({
 
 ## Q: `interrupt()` 打断之后，ASR / 麦克风还会继续开着吗？
 
-A: 会。`interrupt(type)` 只打断当前数字人的**播报**，返回耗时（毫秒），麦克风与 ASR 保持开启，便于用户打断后立即继续说。若打断后需要停止监听，应另行调用 `stopASR()`：
+A: 会。`interrupt(type)` 只打断当前具身智能体的**播报**，返回耗时（毫秒），麦克风与 ASR 保持开启，便于用户打断后立即继续说。若打断后需要停止监听，应另行调用 `stopASR()`：
 
 ```javascript
 agent.interrupt('user');    // 打断当前播报；ASR 仍开启
@@ -131,7 +131,7 @@ agentCallbacks: {
 }
 ```
 
-## Q: 一个页面能创建多个数字人实例吗？性能怎么控制？
+## Q: 一个页面能创建多个具身智能体实例吗？性能怎么控制？
 
 A: 可以，但建议单页单实例。多实例的三点代价：
 
@@ -183,8 +183,8 @@ A:
 
 | 方法 | 作用 | 链路 |
 |------|------|------|
-| `ask(text)` | 发起一轮 Brain 对话（问答/多轮交互） | ASR 文本或直接文本 → 大模型（Brain）→ 数字人播报 |
-| `speak(ssml)` | 直接让数字人播报一段 SSML，跳过大模型 | 直接 → 数字人 TTSA 播报 |
+| `ask(text)` | 发起一轮 Brain 对话（问答/多轮交互） | ASR 文本或直接文本 → 大模型（Brain）→ 具身智能体播报 |
+| `speak(ssml)` | 直接让具身智能体播报一段 SSML，跳过大模型 | 直接 → 具身智能体 TTSA 播报 |
 
 `speak(ssml, is_start?, is_end?, extra?)` 返回 `string | undefined`（本次播报的标识），适合播固定话术；`ask(text)` 适合需要大模型理解与回答的场景。
 
@@ -210,14 +210,14 @@ A: `XingyunAvatarAgent` 有**两条独立的错误通道**，必须同时处理�
 
 | 通道 | 位置 | 错误结构 | 覆盖范围 |
 |------|------|----------|----------|
-| `onMessage` | 构造参数顶层（必填） | `SDKError`（数字码） | 数字人渲染、会话、解码、网络、WebGL |
+| `onMessage` | 构造参数顶层（必填） | `SDKError`（数字码） | 具身智能体渲染、会话、解码、网络、WebGL |
 | `agentCallbacks.onError` | `agentCallbacks` 内 | `AgentError`（字符串码 + 域） | Agent 初始化、ASR、Brain、网络、配额 |
 
 ```javascript
 const agent = new XingyunAvatarAgent({
   // ...
   onMessage(error) {
-    console.error('数字人/渲染/会话错误', error.code, error.message);
+    console.error('具身智能体/渲染/会话错误', error.code, error.message);
   },
   agentCallbacks: {
     onError(error) {

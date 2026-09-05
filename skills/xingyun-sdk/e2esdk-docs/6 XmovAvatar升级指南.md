@@ -11,7 +11,7 @@
 | 大模型（LLM）对话 | 无，需业务自行接入 | 内置 Brain，`ask()` 直接对话 |
 | 播报 | `speak(ssml)` | `speak(ssml)` ＋ `ask()` / ASR 自动播报 |
 | 断线重连 | 渲染层自动重连 | E2E 控制面 + 渲染层自动重连 |
-| 异常监听 | 单一 `onMessage` | `onMessage`（数字人层）＋ `agentCallbacks.onError`（Agent 层） |
+| 异常监听 | 单一 `onMessage` | `onMessage`（渲染层）＋ `agentCallbacks.onError`（Agent 层） |
 
 一句话概括：旧版是「会说话的数字人」，对话中的「感知」（ASR）与「认知」（LLM）需要业务自己搭建；新版把「感知 → 认知 → 表达」串成一条链路，业务只需一行 `ask()` 或 `startASR()`。
 
@@ -89,7 +89,7 @@ const agent = new XingyunAvatarAgent({
 | `appId` | 必填 | 必填 | 不变 |
 | `appSecret` | 必填 | 必填 | 不变 |
 | `gatewayServer` | 固定 `/ttsa/session` | 固定 `/ttsa_v2/session` | **值变化** |
-| `onMessage` | 必填 | 必填 | 不变（数字人层错误） |
+| `onMessage` | 必填 | 必填 | 不变（渲染层错误） |
 | `containerId` / `container` | 二选一 | 二选一（条件必填） | 不变 |
 | `config` | 可选 | 可选 | 不变 |
 | `enableClientInterrupt` | 可选，默认 `false` | 可选，默认 `true` | **默认值变化** |
@@ -101,7 +101,7 @@ const agent = new XingyunAvatarAgent({
 | `audio` / `reconnect` | — | 可选 | 新增 |
 | `agentCallbacks` | — | 可选 | 新增（Agent 回调组） |
 
-> 数字人层回调（`onStatusChange`、`onRenderChange`、`onVoiceStateChange`、`onSpeakStateChange`、`onWalkStateChange`、`onWidgetEvent`、`proxyWidget`、`onNetworkInfo`、`onStartSessionWarning`、`onFPSUpdate`）两套 SDK 均挂在构造参数顶层，名称与签名基本一致，可直接沿用。
+> 渲染层回调（`onStatusChange`、`onRenderChange`、`onVoiceStateChange`、`onSpeakStateChange`、`onWalkStateChange`、`onWidgetEvent`、`proxyWidget`、`onNetworkInfo`、`onStartSessionWarning`、`onFPSUpdate`）两套 SDK 均挂在构造参数顶层，名称与签名基本一致，可直接沿用。
 
 ## 方法对照
 
@@ -134,7 +134,7 @@ const agent = new XingyunAvatarAgent({
 
 | 方法 | 说明 |
 |------|------|
-| `ask(text)` | 发起一轮文本对话（大模型 → 数字人播报） |
+| `ask(text)` | 发起一轮文本对话（大模型 → 具身智能体播报） |
 | `startASR()` / `stopASR()` | 开始 / 结束语音识别 |
 | `getAgentState()` | Agent 整体状态查询 |
 | `getASRState()` | 语音识别 / 麦克风状态查询 |
@@ -162,7 +162,7 @@ const agent = new XingyunAvatarAgent({
 
 1. **替换引入与构造**：改 CDN 文件名、全局对象名、`gatewayServer` 路径；在 `onMessage` 之外补上 `agentCallbacks.onError`，覆盖完整异常监听。
 2. **重构对话链路**：把「业务自建 ASR + LLM → 拼 SSML → `speak()`」改为直接 `ask()` 或 `startASR()`；判断「一轮对话完成」改用 `onConversationChange` 的 `completed`。
-3. **灰度验证**：先在灰度环境验证数字人渲染、文本对话、语音识别、打断与重连，再全量切换。
+3. **灰度验证**：先在灰度环境验证具身智能体渲染、文本对话、语音识别、打断与重连，再全量切换。
 
 ## 迁移示例
 

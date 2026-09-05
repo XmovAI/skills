@@ -1,15 +1,15 @@
 ---
 name: xingyun-sdk
-description: 魔珐星云具身交互智能体 Web SDK 开发助手，覆盖两套接入入口：端到端 SDK（XingyunAvatarAgent，入口 @xmov/avatar/agent，在渲染之上增加文本对话、ASR 语音识别、LLM Brain、数字人播报、对话打断、断线恢复，可闭环实现感知-认知-表达的具身交互智能体）与旧版渲染 SDK（XmovAvatar，入口 @xmov/avatar，负责 WebGL 渲染、SSML 播报、行走动画、关键动作、情绪表情、Widget 组件等）。当用户提到数字人、星云、XmovAvatar、XingyunAvatarAgent、SSML、WebGL 渲染、具身驱动、具身交互智能体、语音识别/ASR、LLM/Brain、虚拟人、数字人 SDK、星云平台、行走动画、关键动作、情绪表情、Widget 组件、隐身模式、客户端打断，或任何魔珐星云 3D 数字人开发、接入、配置、调试、从 XmovAvatar 升级迁移相关内容时，都必须使用此技能，即使用户只是想了解如何接入、如何配置、如何调试数字人应用。
+description: 魔珐星云具身交互智能体 Web SDK 开发助手，覆盖两套接入入口：端到端 SDK（XingyunAvatarAgent，入口 @xmov/avatar/agent，在渲染之上增加文本对话、ASR 语音识别、LLM Brain、具身智能体播报、对话打断、断线恢复，可闭环实现感知-认知-表达的具身交互智能体）与旧版渲染 SDK（XmovAvatar，入口 @xmov/avatar，负责 WebGL 渲染、SSML 播报、行走动画、关键动作、情绪表情、Widget 组件等）。当用户提到数字人、星云、XmovAvatar、XingyunAvatarAgent、SSML、WebGL 渲染、具身驱动、具身交互智能体、具身智能体、语音识别/ASR、LLM/Brain、虚拟人、数字人 SDK、星云平台、行走动画、关键动作、情绪表情、Widget 组件、隐身模式、客户端打断，或任何魔珐星云 3D 数字人开发、接入、配置、调试、从 XmovAvatar 升级迁移相关内容时，都必须使用此技能，即使用户只是想了解如何接入、如何配置、如何调试数字人应用。
 compatibility: Designed for Claude Code and similar products
 license: MIT
 ---
 
 # 魔珐星云具身交互智能体 Web SDK 开发助手
 
-本技能为魔珐星云 3D 数字人 Web SDK 提供文档支持，覆盖两套接入入口：
+本技能为魔珐星云 3D 具身交互智能体 Web SDK 提供文档支持，覆盖两套接入入口：
 
-- **端到端 SDK**（`XingyunAvatarAgent`，入口 `@xmov/avatar/agent`）：新升级的具身交互智能体 SDK，在数字人渲染能力之上新增 ASR 语音识别、LLM Brain 文本对话、数字人播报、对话打断、状态回调与断线恢复，可闭环完成「感知 → 认知 → 表达」的完整交互。
+- **端到端 SDK**（`XingyunAvatarAgent`，入口 `@xmov/avatar/agent`）：新升级的具身交互智能体 SDK，在具身智能体渲染能力之上新增 ASR 语音识别、LLM Brain 文本对话、具身智能体播报、对话打断、状态回调与断线恢复，可闭环完成「感知 → 认知 → 表达」的完整交互。
 - **旧版渲染 SDK**（`XmovAvatar`，入口 `@xmov/avatar`）：负责 WebGL 渲染、SSML 播报、行走动画、关键动作、情绪表情、Widget 组件等纯渲染与驱动能力。
 
 `XingyunAvatarAgent` **继承** `XmovAvatar`，两套 API 高度兼容，详见文档集选择与迁移指南。
@@ -61,7 +61,7 @@ license: MIT
 | 服务与大脑配置 | asr_config、brain_config、大脑、服务配置、provider、e2eServer、authToken、base_url | `e2esdk-docs/2 功能介绍/2.2 服务与大脑配置.md` |
 | 文本对话 | ask、文本对话、大模型、LLM、流式、onLLMResponse、Conversation | `e2esdk-docs/2 功能介绍/2.3 文本对话.md` |
 | 语音识别与麦克风 | startASR、stopASR、语音识别、麦克风、ASR、getUserMedia、isFinal、onASRResult | `e2esdk-docs/2 功能介绍/2.4 语音识别与麦克风.md` |
-| 数字人播报与 SSML | speak、SSML、播报、流式、口型、字幕 | `e2esdk-docs/2 功能介绍/2.5 数字人播报与 SSML.md` |
+| 具身智能体播报与 SSML | speak、SSML、播报、流式、口型、字幕 | `e2esdk-docs/2 功能介绍/2.5 具身智能体播报与 SSML.md` |
 | 打断与状态控制 | 打断、interrupt、状态控制、idle、listen、interactiveidle、enableClientInterrupt | `e2esdk-docs/2 功能介绍/2.6 打断与状态控制.md` |
 | 布局与隐身 | 布局、layout、隐身、invisible、可见、changeLayout、changeAvatarVisible、switchInvisibleMode | `e2esdk-docs/2 功能介绍/2.7 布局与隐身.md` |
 | 动作、行走与表情 | 动作、行走、walk、关键动作、ka、表情、情绪 | `e2esdk-docs/2 功能介绍/2.8 动作、行走与表情.md` |
@@ -78,7 +78,7 @@ license: MIT
 | 生命周期方法 | init、destroy、生命周期、方法、API | `e2esdk-docs/3 API参考/3.2 生命周期方法.md` |
 | 会话与状态方法 | 会话、getAgentState、getASRState、getStatus、getRenderState、offlineMode、onlineMode、session | `e2esdk-docs/3 API参考/3.3 会话与状态方法.md` |
 | 语音与对话方法 | ask、startASR、stopASR、语音、对话、方法 | `e2esdk-docs/3 API参考/3.4 语音与对话方法.md` |
-| 数字人控制方法 | speak、interrupt、idle、listen、changeLayout、changeAvatarVisible、setVolume、控制 | `e2esdk-docs/3 API参考/3.5 数字人控制方法.md` |
+| 具身智能体控制方法 | speak、interrupt、idle、listen、changeLayout、changeAvatarVisible、setVolume、控制 | `e2esdk-docs/3 API参考/3.5 具身智能体控制方法.md` |
 | 回调接口 | 回调、callback、onMessage、agentCallbacks、onAgentStateChange、onASRResult、onLLMResponse | `e2esdk-docs/3 API参考/3.6 回调接口.md` |
 | 错误码 | 错误码、errorCode、code、domain | `e2esdk-docs/3 API参考/3.7 错误码.md` |
 | 类型定义 | 类型、interface、TypeScript、AgentState、AgentError、AgentASRState | `e2esdk-docs/3 API参考/3.8 类型定义.md` |
@@ -142,14 +142,14 @@ license: MIT
 
 ## 使用示例
 
-用户问「怎么让数字人通过文本对话并语音识别？」→ 默认走端到端 SDK → 加载 `e2esdk-docs/1 快速接入/1.1 概述.md`（或 `1.2 快速开始.md`）
+用户问「怎么让具身智能体通过文本对话并语音识别？」→ 默认走端到端 SDK → 加载 `e2esdk-docs/1 快速接入/1.1 概述.md`（或 `1.2 快速开始.md`）
 
 用户问「XingyunAvatarAgent 的 ask 怎么用？」→ 加载 `e2esdk-docs/2 功能介绍/2.3 文本对话.md`（或 `3.4 语音与对话方法.md`）
 
 用户问「怎么从 XmovAvatar 升级到 XingyunAvatarAgent？」→ 加载 `e2esdk-docs/6 XmovAvatar升级指南.md`
 
-用户问「`new XmovAvatar` 里怎么让数字人走路？」→ 检测到基于 XmovAvatar → 加载 `sdk-docs/3 高级功能/3.4 行走动画控制.md`
+用户问「`new XmovAvatar` 里怎么让具身智能体走路？」→ 检测到基于 XmovAvatar → 加载 `sdk-docs/3 高级功能/3.4 行走动画控制.md`
 
-用户问「XingyunAvatarAgent 下怎么让数字人做关键动作？」→ 先加载 `e2esdk-docs/2 功能介绍/2.8 动作、行走与表情.md`；如需完整动作意图清单再回退 `sdk-docs/3 高级功能/3.5.1 动作意图列表.md`
+用户问「XingyunAvatarAgent 下怎么让具身智能体做关键动作？」→ 先加载 `e2esdk-docs/2 功能介绍/2.8 动作、行走与表情.md`；如需完整动作意图清单再回退 `sdk-docs/3 高级功能/3.5.1 动作意图列表.md`
 
 用户问「旧 SDK 报错了 10003」→ 检测到旧版错误码 → 加载 `sdk-docs/2 API参考/2.4 错误处理 — 错误码体系与最佳实践.md`
