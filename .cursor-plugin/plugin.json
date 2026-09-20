@@ -1,0 +1,21 @@
+{
+  "name": "xingyun-skills",
+  "displayName": "魔珐星云 SDK Skills",
+  "version": "1.0.0",
+  "description": "魔珐星云具身交互智能体 Web SDK 开发助手技能与插件",
+  "author": {
+    "name": "XmovAI",
+    "url": "https://github.com/XmovAI"
+  },
+  "homepage": "https://github.com/XmovAI/skills",
+  "repository": "https://github.com/XmovAI/skills",
+  "license": "MIT",
+  "keywords": [
+    "cursor",
+    "xingyun",
+    "digital-human",
+    "avatar",
+    "skills"
+  ],
+  "skills": "./skills/"
+}
