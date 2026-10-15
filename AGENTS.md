@@ -4,7 +4,7 @@
 
 ## 技能索引
 
-- **xingyun-sdk**（位于 [skills/xingyun-sdk](file:///home/mypal/Codes/skills/skills/xingyun-sdk/SKILL.md)）：
+- **xingyun-sdk**（位于 [skills/xingyun-sdk](skills/xingyun-sdk/SKILL.md)）：
   魔珐星云具身交互智能体 Web SDK 开发助手。覆盖端到端 SDK（`XingyunAvatarAgent`，入口 `@xmov/avatar/agent`）与旧版渲染 SDK（`XmovAvatar`，入口 `@xmov/avatar`）。
   详细文档位于：
   - `skills/xingyun-sdk/e2esdk-docs/`（端到端交互智能体 SDK 文档）

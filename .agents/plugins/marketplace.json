@@ -1,0 +1,20 @@
+{
+  "name": "xingyun-skills",
+  "interface": {
+    "displayName": "魔珐星云 SDK Skills"
+  },
+  "plugins": [
+    {
+      "name": "xingyun-skills",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

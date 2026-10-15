@@ -1,7 +1,6 @@
 ---
 name: xingyun-sdk
-description: 魔珐星云具身交互智能体 Web SDK 开发助手，覆盖两套接入入口：端到端 SDK（XingyunAvatarAgent，入口 @xmov/avatar/agent，在渲染之上增加文本对话、ASR 语音识别、LLM Brain、具身智能体播报、对话打断、断线恢复，可闭环实现感知-认知-表达的具身交互智能体）与旧版渲染 SDK（XmovAvatar，入口 @xmov/avatar，负责 WebGL 渲染、SSML 播报、行走动画、关键动作、情绪表情、Widget 组件等）。当用户提到数字人、星云、XmovAvatar、XingyunAvatarAgent、SSML、WebGL 渲染、具身驱动、具身交互智能体、具身智能体、语音识别/ASR、LLM/Brain、虚拟人、数字人 SDK、星云平台、行走动画、关键动作、情绪表情、Widget 组件、隐身模式、客户端打断，或任何魔珐星云 3D 数字人开发、接入、配置、调试、从 XmovAvatar 升级迁移相关内容时，都必须使用此技能，即使用户只是想了解如何接入、如何配置、如何调试数字人应用。
-compatibility: Designed for Claude Code and similar products
+description: 魔珐星云（XmovAI）Web 数字人 SDK 接入、配置、调试与迁移助手。用户提到星云 SDK、XingyunAvatarAgent（@xmov/avatar/agent）或 XmovAvatar（@xmov/avatar）时使用；ASR、LLM、SSML、WebGL、Widget 等问题仅在魔珐星云 SDK 场景下使用。
 license: MIT
 ---
 
@@ -20,7 +19,7 @@ license: MIT
 
 1. **选择文档集**：按下方「文档集选择（路由）」判断该读 `e2esdk-docs` 还是 `sdk-docs`
 2. **匹配文档索引**：在对应文档集的索引表中，按用户问题关键词找到文档路径
-3. **加载文档**：使用 Read 工具读取文档完整内容（路径相对于技能目录，如 `e2esdk-docs/1 快速接入/1.2 快速开始.md`）
+3. **加载文档**：使用当前环境可用的文件读取工具读取文档完整内容（路径相对于本 SKILL.md 所在目录，不是当前项目工作目录；如 `e2esdk-docs/1 快速接入/1.2 快速开始.md`）
 4. **基于文档回答**：严格依据文档内容回答，不要凭记忆臆断 API、参数或状态取值
 
 > 一次只加载当前问题所需的文档，不要一次性加载所有文档。问题涉及多个模块时按需逐个加载。
