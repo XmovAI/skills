@@ -47,7 +47,7 @@ A: 按顺序检查：
 1. **安全上下文**：页面必须运行在 HTTPS，开发环境可用 `localhost` 或回环地址；普通 HTTP 下 `getUserMedia` 被浏览器禁用。
 2. **权限**：浏览器是否允许当前站点使用麦克风；若页面嵌在 iframe 中，宿主需给 iframe 授权麦克风（`<iframe allow="microphone">`）。
 3. **用户手势**：`startASR()` 应在按钮点击等用户操作中触发；非手势上下文下浏览器可能拒绝授权。
-4. **浏览器能力**：`MediaRecorder.isTypeSupported("audio/webm;codecs=opus")` 必须为 `true`，否则会经 `agentCallbacks.onError` 返回 `AUDIO_WEBM_OPUS_UNSUPPORTED`。
+4. **浏览器能力**：AEC 关闭时检查 MediaRecorder WebM/Opus；AEC 开启时检查 AudioWorklet / WebCodecs Opus，分别可能返回 `AUDIO_WEBM_OPUS_UNSUPPORTED` 或 `AUDIO_WEBCODECS_OPUS_UNSUPPORTED`。以 Session 的实际 AEC 设置为准，见 2.4。
 5. **设备**：确认系统存在可用麦克风输入设备。
 
 ```javascript
@@ -65,25 +65,21 @@ micButton.addEventListener('click', async () => {
 
 ## Q: `init()` 完成后什么时候能开始对话？
 
-A: `init()` 返回时实例已进入 `running` 状态，无需额外的启动步骤，可以直接调用 `ask()`、`speak()`、`startASR()`：
+A: `await init()` 成功完成时实例已进入 `running` 状态，无需额外的启动步骤，可以直接调用 `ask()`、`speak()`、`startASR()`：
 
 ```javascript
-const agent = new XingyunAvatarAgent({ /* ... */ });
-
-agent.init({
-    onDownloadProgress: (progress) => {
-        if (progress === 100) {
-            // 可交互
-        }
-    },
-}).then(() => {
-    // 可交互
-    agent.ask('你好');          // 直接可用
-    agent.startASR();           // 语音直接可用
-});
+const agent = new XingyunAvatarAgent({ /* 必填参数见快速开始 */ });
+try {
+  await agent.init({ onDownloadProgress: (progress) => console.log(progress) });
+  await agent.ask('你好');
+  // startASR() 由用户点击麦克风按钮后触发。
+} catch (error) {
+  console.error(error);
+  await agent.destroy('init_failed').catch(console.error);
+}
 ```
 
-`init()` 返回 `Promise<void>`，当 Promise resolve 后即可进入可交互状态；另外也可以监听 `init()` 的回调函数 `onDownloadProgress`，当 `progress === 100` 时，也可发起对话。此时获取状态 `getAgentState()` 为 `'running'`，`initializing`/`reconnecting`/`stopped`/`failed`/`destroyed` 状态下应禁用交互按钮。
+以 `await init()` 成功完成或 `getAgentState() === 'running'` 判断可交互。`onDownloadProgress` 达到 100% 仅代表资源下载进度，不能证明 E2E / TTSA 连接均已就绪。`initializing` / `reconnecting` / `stopped` / `failed` / `destroyed` 时禁用新的交互入口。
 
 ## Q: 如何判断「一轮对话」已经完成？
 
@@ -91,7 +87,7 @@ A: 分两层判断，不要用 `ask()` 的返回值判断：
 
 - `ask(text)` 返回 `Promise<void>`，仅表示消息已写入，**不代表播报完成**。
 - 文本生成（LLM）完成：监听 `agentCallbacks.onLLMResponse`，先收到多条 `{ event: 'chunk' }`，最后一条 `{ event: 'done', usage: ... }` 表示大模型输出完毕。
-- 播报（具身智能体说话）完成：监听 `agentCallbacks.onSpeakStateChange` 或 `agentCallbacks.onConversationChange`，当 `event.state === 'completed'` 表示本轮播报结束（`'failed'` 为失败，`'interrupted'` 为被打断）。
+- 播报（具身智能体说话）完成：监听 `agentCallbacks.onConversationChange` 的 `completed` / `failed` / `interrupted`；`agentCallbacks.onSpeakStateChange` 使用播报状态，如 `speak_end`，不要混用两组状态。
 
 ```javascript
 const agent = new XingyunAvatarAgent({
@@ -108,10 +104,10 @@ const agent = new XingyunAvatarAgent({
 
 ## Q: `interrupt()` 打断之后，ASR / 麦克风还会继续开着吗？
 
-A: 会。`interrupt(type)` 只打断当前具身智能体的**播报**，返回耗时（毫秒），麦克风与 ASR 保持开启，便于用户打断后立即继续说。若打断后需要停止监听，应另行调用 `stopASR()`：
+A: 会。`interrupt()` 只打断当前具身智能体的**播报**，返回耗时（毫秒），麦克风与 ASR 保持开启，便于用户打断后立即继续说。若打断后需要停止监听，应另行调用 `stopASR()`：
 
 ```javascript
-agent.interrupt('user');    // 打断当前播报；ASR 仍开启
+agent.interrupt();    // 打断当前播报；ASR 仍开启
 agent.stopASR();          // 如不再需要监听，再结束识别并释放麦克风
 ```
 
@@ -170,7 +166,7 @@ A: 快速体验可用浮动标签 `@latest`，安装到的是当前最新版；�
 
 ```bash
 npm install @xmov/avatar@latest   # 快速体验：安装最新版
-npm install @xmov/avatar@1.0.0    # 生产：以项目方提供版本号为准
+npm install @xmov/avatar@2.4.1    # 生产：以项目方提供版本号为准
 ```
 
 ```javascript
@@ -186,7 +182,7 @@ A:
 | `ask(text)` | 发起一轮 Brain 对话（问答/多轮交互） | ASR 文本或直接文本 → 大模型（Brain）→ 具身智能体播报 |
 | `speak(ssml)` | 直接让具身智能体播报一段 SSML，跳过大模型 | 直接 → 具身智能体 TTSA 播报 |
 
-`speak(ssml, is_start?, is_end?, extra?)` 返回 `string | undefined`（本次播报的标识），适合播固定话术；`ask(text)` 适合需要大模型理解与回答的场景。
+`speak(ssml, is_start?, is_end?)` 的两个布尔参数默认 `true`，常规 Agent 路径返回 `undefined`，不接受第四参数，适合播固定话术；`ask(text)` 适合需要大模型理解与回答的场景。
 
 ```javascript
 agent.ask('帮我介绍一下公司');          // 走大模型，返回不代表播报完成

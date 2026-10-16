@@ -11,16 +11,17 @@ license: MIT
 - **端到端 SDK**（`XingyunAvatarAgent`，入口 `@xmov/avatar/agent`）：新升级的具身交互智能体 SDK，在具身智能体渲染能力之上新增 ASR 语音识别、LLM Brain 文本对话、具身智能体播报、对话打断、状态回调与断线恢复，可闭环完成「感知 → 认知 → 表达」的完整交互。
 - **旧版渲染 SDK**（`XmovAvatar`，入口 `@xmov/avatar`）：负责 WebGL 渲染、SSML 播报、行走动画、关键动作、情绪表情、Widget 组件等纯渲染与驱动能力。
 
-`XingyunAvatarAgent` **继承** `XmovAvatar`，两套 API 高度兼容，详见文档集选择与迁移指南。
+默认文档基线为 **`@xmov/avatar@2.4.1`**。2.4.1 的 Agent 继承渲染类，但部分方法签名和生命周期不同；2.5 开发版已收敛公开接口。先读 [版本基线与差异](references/sdk-versions.md)，再按入口选择资料。
 
 ## 工作流程
 
 当用户提出开发相关问题时：
 
-1. **选择文档集**：按下方「文档集选择（路由）」判断该读 `e2esdk-docs` 还是 `sdk-docs`
-2. **匹配文档索引**：在对应文档集的索引表中，按用户问题关键词找到文档路径
-3. **加载文档**：使用当前环境可用的文件读取工具读取文档完整内容（路径相对于本 SKILL.md 所在目录，不是当前项目工作目录；如 `e2esdk-docs/1 快速接入/1.2 快速开始.md`）
-4. **基于文档回答**：严格依据文档内容回答，不要凭记忆臆断 API、参数或状态取值
+1. **确认版本与入口**：检查目标项目的 package.json、锁文件或实际 CDN URL。缺少版本信息时明确采用 2.4.1；涉及升级时先查 `references/sdk-versions.md`，不要把开发版行为当成正式版承诺。
+2. **选择文档集**：按下方「文档集选择（路由）」判断该读 `e2esdk-docs` 还是 `sdk-docs`
+3. **匹配文档索引**：在对应文档集的索引表中，按用户问题关键词找到文档路径
+4. **加载文档**：使用当前环境可用的文件读取工具读取文档完整内容（路径相对于本 SKILL.md 所在目录，不是当前项目工作目录；如 `e2esdk-docs/1 快速接入/1.2 快速开始.md`）
+5. **基于文档回答**：严格依据文档内容回答，不要凭记忆臆断 API、参数或状态取值。使用公开入口与类型；区分 SDK 客户端行为和 provider / 角色支持，源码与类型通过不等于真实服务验收
 
 > 一次只加载当前问题所需的文档，不要一次性加载所有文档。问题涉及多个模块时按需逐个加载。
 
@@ -33,7 +34,7 @@ license: MIT
 
 **默认优先加载 `e2esdk-docs`。** 只有当检测到用户当前代码实现是基于 `XmovAvatar` 构建的，才引用 `sdk-docs`。
 
-**判定「代码基于 XmovAvatar」的信号**（命中任意一条即改用 `sdk-docs`）：
+**判定「代码基于 XmovAvatar」的信号**（优先看实际导入和构造器；网关地址只作辅助）：
 
 - 代码出现 `new XmovAvatar(`，或用 `import XmovAvatar from "@xmov/avatar"`（导入路径不含 `/agent` 后缀）、`<script>` 加载 `xmovAvatar@latest.js`
 - `gatewayServer` 用旧版地址（以 `/user/v1/ttsa/session` 结尾）
@@ -57,15 +58,15 @@ license: MIT
 | 主题 | 关键词 | 文档路径 |
 |------|--------|----------|
 | 连接与生命周期、状态驱动 | 生命周期、init、destroy、getAgentState、getASRState、状态驱动、AgentState、ASRState | `e2esdk-docs/2 功能介绍/2.1 连接与生命周期.md` |
-| 服务与大脑配置 | asr_config、brain_config、大脑、服务配置、provider、e2eServer、authToken、base_url | `e2esdk-docs/2 功能介绍/2.2 服务与大脑配置.md` |
+| 服务与大脑配置 | asr_config、tts_config、asr_id、llm_id、brain_config、extras、session_speak_req_id、speech_frontend、服务配置 | `e2esdk-docs/2 功能介绍/2.2 服务与大脑配置.md` |
 | 文本对话 | ask、文本对话、大模型、LLM、流式、onLLMResponse、Conversation | `e2esdk-docs/2 功能介绍/2.3 文本对话.md` |
-| 语音识别与麦克风 | startASR、stopASR、语音识别、麦克风、ASR、getUserMedia、isFinal、onASRResult | `e2esdk-docs/2 功能介绍/2.4 语音识别与麦克风.md` |
+| 语音识别与麦克风 | startASR、stopASR、inputStream、MediaStream、AEC、enable_aec、AudioWorklet、WebCodecs、麦克风、onASRResult | `e2esdk-docs/2 功能介绍/2.4 语音识别与麦克风.md` |
 | 具身智能体播报与 SSML | speak、SSML、播报、流式、口型、字幕 | `e2esdk-docs/2 功能介绍/2.5 具身智能体播报与 SSML.md` |
 | 打断与状态控制 | 打断、interrupt、状态控制、idle、listen、interactiveidle、enableClientInterrupt | `e2esdk-docs/2 功能介绍/2.6 打断与状态控制.md` |
 | 布局与隐身 | 布局、layout、隐身、invisible、可见、changeLayout、changeAvatarVisible、switchInvisibleMode | `e2esdk-docs/2 功能介绍/2.7 布局与隐身.md` |
 | 动作、行走与表情 | 动作、行走、walk、关键动作、ka、表情、情绪 | `e2esdk-docs/2 功能介绍/2.8 动作、行走与表情.md` |
 | UI 组件（Widget） | Widget、控件、字幕、图片、视频、proxyWidget、onWidgetEvent | `e2esdk-docs/2 功能介绍/2.9 UI 组件（Widget）.md` |
-| 断线重连 | 断线、重连、reconnecting、reconnect、网络 | `e2esdk-docs/2 功能介绍/2.10 断线重连.md` |
+| 断线重连 | 断线、重连、reconnecting、reconnect、service_update、4011、同房迁移 | `e2esdk-docs/2 功能介绍/2.10 断线重连.md` |
 | 调试与监控 | 调试、debug、监控、FPS、网络质量、debugInfo | `e2esdk-docs/2 功能介绍/2.11 调试与监控.md` |
 | 错误处理 | 错误、error、onMessage、agentCallbacks.onError、domain、retryable | `e2esdk-docs/2 功能介绍/2.12 错误处理.md` |
 
@@ -138,6 +139,12 @@ license: MIT
 | 主题 | 关键词 | 文档路径 |
 |------|--------|----------|
 | FAQ、接入问题、性能调优、多实例 | FAQ、问题、多实例、内存、卡顿、移动端、微信、初始化失败 | `sdk-docs/4 常见问题（FAQ）— 接入、配置、多实例与性能调优.md` |
+
+## 基线与共享资料边界
+
+- [版本基线与 2.5 差异](references/sdk-versions.md)：版本选择、公开导出、升级边界。
+- Android v0.0.6 与 SaaS 功能清单沿用各自版本，不能作为 Web 2.4.1 的接口依据。
+- 回退到渲染资料时仅复用所需的 SSML / 素材说明；生成 Agent 代码仍需复核 `speak`、`interrupt`、隐身和回调签名。
 
 ## 使用示例
 

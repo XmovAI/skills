@@ -3,6 +3,17 @@
   "version": "1.0.0",
   "description": "魔珐星云 AI Agent Skills 仓库",
   "private": true,
+  "scripts": {
+    "test": "node scripts/validate-docs.mjs && node scripts/validate-examples.mjs",
+    "validate:docs": "node scripts/validate-docs.mjs",
+    "validate:examples": "node scripts/validate-examples.mjs"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.12",
+    "@xmov/avatar": "2.4.1",
+    "typescript": "5.6.3",
+    "vue": "3.5.44"
+  },
   "keywords": [
     "agent-skills",
     "xingyun",

@@ -19,21 +19,21 @@
 
 | 项 | 旧版 | 端到端 SDK |
 |----|------|-----------|
-| CDN 文件 | `xmovAvatar@latest.js` | `xmovAvatar_e2e@latest.js` |
+| CDN 文件 | `xmovAvatar.2.4.1.js` | `xmovAvatar_e2e.2.4.1.js` |
 | 全局对象 | `window.XmovAvatar` | `window.XingyunAvatarAgent` |
-| npm 包 | 无（仅 CDN） | `@xmov/avatar/agent` |
+| npm 导入入口 | `@xmov/avatar` | `@xmov/avatar/agent`（同一个 npm 包的子路径） |
 
 CDN 引入：
 
 ```html
 <!-- 旧版 -->
-<script src="https://media.xingyun3d.com/xingyun3d/general/litesdk/xmovAvatar@latest.js"></script>
+<script src="https://media.xingyun3d.com/xingyun3d/general/litesdk/xmovAvatar.2.4.1.js"></script>
 
 <!-- 端到端 SDK -->
-<script src="https://media.xingyun3d.com/xingyun3d/general/litesdk/xmovAvatar_e2e@latest.js"></script>
+<script src="https://media.xingyun3d.com/xingyun3d/general/litesdk/xmovAvatar_e2e.2.4.1.js"></script>
 ```
 
-新增 npm 引入方式：
+Agent 的 npm 引入方式：
 
 ```ts
 import XingyunAvatarAgent from "@xmov/avatar/agent";
@@ -41,7 +41,7 @@ import XingyunAvatarAgent from "@xmov/avatar/agent";
 
 ## gatewayServer 变化
 
-两套 SDK 的 `gatewayServer` 均为固定值，但**路径不同**，迁移时务必替换：
+公共云默认网关路径不同；私有化部署按服务端约定提供地址：
 
 | 项 | 地址 |
 |----|------|
@@ -67,6 +67,7 @@ const avatar = new XmovAvatar({
 
 // 端到端 SDK
 const agent = new XingyunAvatarAgent({
+  containerId: "",
   container: document.getElementById("avatar-container"),
   appId: "your-app-id",
   appSecret: "your-app-secret",
@@ -90,7 +91,7 @@ const agent = new XingyunAvatarAgent({
 | `appSecret` | 必填 | 必填 | 不变 |
 | `gatewayServer` | 固定 `/ttsa/session` | 固定 `/ttsa_v2/session` | **值变化** |
 | `onMessage` | 必填 | 必填 | 不变（渲染层错误） |
-| `containerId` / `container` | 二选一 | 二选一（条件必填） | 不变 |
+| `containerId` / `container` | TS 要求 `containerId`；运行时优先有效 `container` | 相同 | DOM 写法仍需 `containerId: ""` |
 | `config` | 可选 | 可选 | 不变 |
 | `enableClientInterrupt` | 可选，默认 `false` | 可选，默认 `true` | **默认值变化** |
 | `enableDebugger` | 可选 | 可选 | 不变 |
@@ -107,17 +108,14 @@ const agent = new XingyunAvatarAgent({
 
 ### 沿用（同名同义）
 
-旧版的方法在端到端 SDK 中基本原样保留，业务无需改动：
+以下是 2.4.1 可沿用的方法。升级到 2.5 时还需检查 [版本基线与差异](<../references/sdk-versions.md>)：
 
 | 方法 | 说明 |
 |------|------|
-| `init(params?)` | 初始化 |
 | `destroy(reason?)` | 销毁实例 |
-| `speak(ssml, ...)` | 播报 SSML |
-| `interrupt(type)` | 客户端打断 |
 | `idle()` / `interactiveidle()` / `listen()` | 待机 / 交互待机 / 聆听姿态 |
 | `changeLayout()` / `changeWalkConfig()` | 布局 / 行走配置 |
-| `changeAvatarVisible()` / `switchInvisibleMode()` | 显隐 / 隐身模式 |
+| `changeAvatarVisible()` | 显隐 |
 | `setVolume()` | 音量 |
 | `showDebugInfo()` / `hideDebugInfo()` | 调试面板 |
 | `getStatus()` / `getRenderState()` | 状态查询 |
@@ -128,7 +126,11 @@ const agent = new XingyunAvatarAgent({
 
 | 项 | 旧版 | 端到端 SDK | 迁移动作 |
 |----|------|-----------|---------|
-| `enableClientInterrupt` 默认值 | `false` | `true` | 如需禁用须显式传 `false` |
+| `init()` | `onDownloadProgress` 必填 | 可省略；成功后自动运行 | 等待 `await init()`，不调用受保护的 `start()` |
+| `speak()` | 第四参数为播报关联字段 | 仅三参数；常规返回 `undefined` | 删除第四参数，完成状态改用回调 |
+| `interrupt()` | `interrupt(type)` | `interrupt()` | 删除实参，业务自行记录打断原因 |
+| `switchInvisibleMode()` | 同步返回 | `Promise<void>`；进入隐身会停 ASR | 等待完成；需要语音时重新启动 ASR |
+| `enableClientInterrupt` 默认值 | `false` | `true` | 配置渲染策略；`false` 不会禁用显式 `interrupt()` |
 
 ### 新增方法（端到端能力）
 
