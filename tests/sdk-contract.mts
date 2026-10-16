@@ -2,9 +2,9 @@
 import Agent, { type XingyunAvatarAgentOptions, type XingyunAvatarAgentInitParams } from '@xmov/avatar/agent';
 // @ts-expect-error This documentation alias is not an SDK export.
 import type { AgentServiceConfig } from '@xmov/avatar/agent';
-// @ts-expect-error RenderState is not an Agent entrypoint export in 2.4.1.
+// @ts-expect-error RenderState is not an Agent entrypoint export in the validation package.
 import type { RenderState } from '@xmov/avatar/agent';
-// @ts-expect-error InitModel is not an Agent entrypoint export in 2.4.1.
+// @ts-expect-error InitModel is not an Agent entrypoint export in the validation package.
 import type { InitModel } from '@xmov/avatar/agent';
 
 declare const agent: Agent;

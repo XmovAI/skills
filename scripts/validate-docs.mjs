@@ -41,13 +41,7 @@ for (const file of manifests) {
 const marketplace = JSON.parse(read(path.join(root, '.agents/plugins/marketplace.json')));
 assert.equal(marketplace.name, 'xingyun-skills');
 assert(marketplace.plugins.some((plugin) => plugin.name === 'xingyun-skills' && plugin.source.source === 'local' && plugin.source.path === './'));
-const baseline = JSON.parse(read(path.join(skill, 'references/sdk-baseline.json')));
 const pkg = JSON.parse(read(path.join(root, 'package.json')));
-assert.equal(pkg.devDependencies[baseline.package], baseline.version, 'Validation dependency must match SDK baseline');
-assert.match(baseline.sourceCommit, /^[a-f0-9]{40}$/);
-assert.match(baseline.comparisonCommit, /^[a-f0-9]{40}$/);
-assert(read(path.join(skill, 'references/sdk-versions.md')).includes(baseline.sourceCommit));
-assert(read(path.join(skill, 'references/sdk-versions.md')).includes(baseline.comparisonCommit));
 console.log(`PASS: ${new Set(indexed).size} indexed documents, ${links} local links, ${manifests.length} plugin manifests + Codex marketplace`);
 
 const baseIndex = process.argv.indexOf('--baseline');

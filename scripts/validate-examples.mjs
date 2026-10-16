@@ -8,9 +8,9 @@ import { parse, compileScript, compileTemplate } from 'vue/compiler-sfc';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const skill = path.join(root, 'skills/xingyun-sdk');
-const baseline = JSON.parse(fs.readFileSync(path.join(skill, 'references/sdk-baseline.json'), 'utf8'));
+const lock = JSON.parse(fs.readFileSync(path.join(root, 'package-lock.json'), 'utf8'));
 const installed = JSON.parse(fs.readFileSync(path.join(root, 'node_modules/@xmov/avatar/package.json'), 'utf8'));
-assert.equal(installed.version, baseline.version, 'Install the pinned SDK using npm ci --ignore-scripts');
+assert.equal(installed.version, lock.packages['node_modules/@xmov/avatar'].version, 'Install the validation dependencies using npm ci --ignore-scripts');
 const walk = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
   const file = path.join(dir, entry.name);
   return entry.isDirectory() ? walk(file) : [file];
@@ -77,7 +77,7 @@ try {
       }
       process.exitCode = 1;
     } else {
-      console.log(`PASS (${mode}): ${count} marked examples (${htmlScripts} browser scripts), Vue/React compilation, and 2.4.1 public API regression checks`);
+      console.log(`PASS (${mode}): ${count} marked examples (${htmlScripts} browser scripts), Vue/React compilation, and public API regression checks`);
     }
   }
 } finally {

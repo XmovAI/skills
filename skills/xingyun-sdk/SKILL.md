@@ -11,13 +11,13 @@ license: MIT
 - **端到端 SDK**（`XingyunAvatarAgent`，入口 `@xmov/avatar/agent`）：新升级的具身交互智能体 SDK，在具身智能体渲染能力之上新增 ASR 语音识别、LLM Brain 文本对话、具身智能体播报、对话打断、状态回调与断线恢复，可闭环完成「感知 → 认知 → 表达」的完整交互。
 - **旧版渲染 SDK**（`XmovAvatar`，入口 `@xmov/avatar`）：负责 WebGL 渲染、SSML 播报、行走动画、关键动作、情绪表情、Widget 组件等纯渲染与驱动能力。
 
-默认文档基线为 **`@xmov/avatar@2.4.1`**。2.4.1 的 Agent 继承渲染类，但部分方法签名和生命周期不同；2.5 开发版已收敛公开接口。先读 [版本基线与差异](references/sdk-versions.md)，再按入口选择资料。
+两套入口的部分方法签名和生命周期不同。按实际导入与构造器选择资料，跨入口复用时参考 [SDK 接入约定](references/sdk-usage.md)。
 
 ## 工作流程
 
 当用户提出开发相关问题时：
 
-1. **确认版本与入口**：检查目标项目的 package.json、锁文件或实际 CDN URL。缺少版本信息时明确采用 2.4.1；涉及升级时先查 `references/sdk-versions.md`，不要把开发版行为当成正式版承诺。
+1. **确认入口**：检查项目中的导入路径、构造器或 CDN 文件，判断使用 `XingyunAvatarAgent` 还是 `XmovAvatar`。新项目优先使用端到端入口，CDN 快速接入使用 `xmovAvatar_e2e@latest.js`。
 2. **选择文档集**：按下方「文档集选择（路由）」判断该读 `e2esdk-docs` 还是 `sdk-docs`
 3. **匹配文档索引**：在对应文档集的索引表中，按用户问题关键词找到文档路径
 4. **加载文档**：使用当前环境可用的文件读取工具读取文档完整内容（路径相对于本 SKILL.md 所在目录，不是当前项目工作目录；如 `e2esdk-docs/1 快速接入/1.2 快速开始.md`）
@@ -151,10 +151,10 @@ license: MIT
 |------|--------|----------|
 | FAQ、接入问题、性能调优、多实例 | FAQ、问题、多实例、内存、卡顿、移动端、微信、初始化失败 | `sdk-docs/4 常见问题（FAQ）— 接入、配置、多实例与性能调优.md` |
 
-## 基线与共享资料边界
+## 共享资料边界
 
-- [版本基线与 2.5 差异](references/sdk-versions.md)：版本选择、公开导出、升级边界。
-- Android v0.0.6 与 SaaS 功能清单沿用各自版本，不能作为 Web 2.4.1 的接口依据。
+- [SDK 接入约定](references/sdk-usage.md)：入口选择、公开类型与核心调用示例。
+- Android 与 SaaS 功能清单是独立资料，不能作为 Web SDK 的接口依据。
 - 回退到渲染资料时仅复用所需的 SSML / 素材说明；生成 Agent 代码仍需复核 `speak`、`interrupt`、隐身和回调签名。
 
 ## 使用示例

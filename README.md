@@ -316,7 +316,7 @@ MIT License。详见 [LICENSE](./LICENSE)。
 
 ## 文档维护与验证
 
-当前 Web SDK 基线为 `@xmov/avatar@2.4.1`，2.5 开发版单独标注，见 [版本基线与差异](skills/xingyun-sdk/references/sdk-versions.md)。安装技能仍使用上面的原有方式；以下命令仅用于维护仓库。
+技能按端到端与渲染入口组织接入说明，公共约定见 [SDK 接入约定](skills/xingyun-sdk/references/sdk-usage.md)。以下命令仅用于维护仓库，测试依赖由锁文件固定以便复现。
 
 ```bash
 npm ci --ignore-scripts
@@ -325,6 +325,6 @@ npm test
 node scripts/validate-docs.mjs --baseline b4a08d1
 ```
 
-`npm test` 检查文档索引、本地链接和插件清单，并提取 `<!-- validate:ts -->`、`tsx`、`vue`、`html` 标记后的代码块，在 TypeScript Bundler 与传统 Node 解析模式下对固定 2.4.1 发布包执行类型/语法检查。Node16 ESM 的已知声明限制见版本说明。回归用例保护已纠正的签名边界；不会运行示例中的真实 SDK 连接。新增关键示例应添加标记，不要另抄一份测试代码。
+`npm test` 检查文档索引、本地链接和插件清单，并提取 `<!-- validate:ts -->`、`tsx`、`vue`、`html` 标记后的代码块，在 TypeScript Bundler 与传统 Node 解析模式下对仓库锁定的 SDK 测试依赖执行类型/语法检查。回归用例保护已纠正的签名边界；不会运行示例中的真实 SDK 连接。新增关键示例应添加标记，不要另抄一份测试代码。
 
 发布前还需按目标环境验收初始化、麦克风授权/释放、组件卸载、断线和服务迁移。静态检查与 mock 测试不替代真实 Gateway、浏览器和设备测试。

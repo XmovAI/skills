@@ -1,6 +1,6 @@
 # 4 常见问题（FAQ）
 
-本节按「接入配置 → 容器与显示 → 麦克风 → 生命周期 → 对话与打断 → 断线恢复 → 多实例与性能 → 安全与版本」梳理 `XingyunAvatarAgent` 接入过程中最常见的问题。答案中的方法名与签名以「3 API参考」为准。
+本节按「接入配置 → 容器与显示 → 麦克风 → 生命周期 → 对话与打断 → 断线恢复 → 多实例与性能 → 安全与安装」梳理 `XingyunAvatarAgent` 接入过程中最常见的问题。答案中的方法名与签名以「3 API参考」为准。
 
 ## Q: `appId`、`appSecret`、`gatewayServer`、`asr_config`、`brain_config` 从哪里获取？
 
@@ -170,13 +170,12 @@ A: `appSecret` 是「浏览器侧凭证」，设计上就要下发给前端，�
 - 生产环境的 ASR、Brain 和 TTS 供应商凭证优先在星云平台应用管理中配置，避免通过 `asr_config`、`brain_config` 或 `tts_config.provider_config` 暴露在浏览器中。含供应商密钥的代码配置仅用于本地测试或受控私有环境。
 - 高权限密钥应由你的业务服务端持有，由服务端向浏览器下发权限受限的会话配置。`gatewayServer` 只填会话接口地址，不要把签名密钥塞进 URL。
 
-## Q: 安装时用 `@latest` 还是锁定具体版本？
+## Q: npm 和 CDN 如何选择？
 
-A: 快速体验可用浮动标签 `@latest`，安装到的是当前最新版；生产环境务必锁定项目方提供的具体版本号，并避免使用会自动漂移的版本范围（如 `^` 宽泛范围）导致生产环境意外升级：
+A: Vite、Webpack 等构建项目通过 npm 安装，从 `/agent` 导入；原生 HTML 通过 CDN 加载 `xmovAvatar_e2e@latest.js`，使用 `window.XingyunAvatarAgent`，完整示例见 [安装与集成](<1 快速接入/1.3 安装与集成.md>)。
 
 ```bash
-npm install @xmov/avatar@latest   # 快速体验：安装最新版
-npm install @xmov/avatar@2.4.1    # 生产：以项目方提供版本号为准
+npm install @xmov/avatar@latest
 ```
 
 ```javascript

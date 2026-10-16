@@ -19,7 +19,7 @@
 
 | 项 | 旧版 | 端到端 SDK |
 |----|------|-----------|
-| CDN 文件 | `xmovAvatar.2.4.1.js` | `xmovAvatar_e2e.2.4.1.js` |
+| CDN 文件 | `xmovAvatar@latest.js` | `xmovAvatar_e2e@latest.js` |
 | 全局对象 | `window.XmovAvatar` | `window.XingyunAvatarAgent` |
 | npm 导入入口 | `@xmov/avatar` | `@xmov/avatar/agent`（同一个 npm 包的子路径） |
 
@@ -27,10 +27,10 @@ CDN 引入：
 
 ```html
 <!-- 旧版 -->
-<script src="https://media.xingyun3d.com/xingyun3d/general/litesdk/xmovAvatar.2.4.1.js"></script>
+<script src="https://media.xingyun3d.com/xingyun3d/general/litesdk/xmovAvatar@latest.js"></script>
 
 <!-- 端到端 SDK -->
-<script src="https://media.xingyun3d.com/xingyun3d/general/litesdk/xmovAvatar_e2e.2.4.1.js"></script>
+<script src="https://media.xingyun3d.com/xingyun3d/general/litesdk/xmovAvatar_e2e@latest.js"></script>
 ```
 
 Agent 的 npm 引入方式：
@@ -125,7 +125,7 @@ tts_config: {
 
 ### 沿用（同名同义）
 
-以下是 2.4.1 可沿用的方法。升级到 2.5 时还需检查 [版本基线与差异](<../references/sdk-versions.md>)：
+以下为两套入口的常用方法，具体可用性以项目使用的公开声明为准：
 
 | 方法 | 说明 |
 |------|------|
