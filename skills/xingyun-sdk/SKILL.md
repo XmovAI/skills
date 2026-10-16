@@ -58,7 +58,7 @@ license: MIT
 | 主题 | 关键词 | 文档路径 |
 |------|--------|----------|
 | 连接与生命周期、状态驱动 | 生命周期、init、destroy、getAgentState、getASRState、状态驱动、AgentState、ASRState | `e2esdk-docs/2 功能介绍/2.1 连接与生命周期.md` |
-| 服务与大脑配置 | asr_config、tts_config、asr_id、llm_id、brain_config、extras、session_speak_req_id、speech_frontend、服务配置 | `e2esdk-docs/2 功能介绍/2.2 服务与大脑配置.md` |
+| 服务与配置、场景接入 | asr_config、brain_config、tts_config、features、平台配置、自动提问、服务配置 | `e2esdk-docs/2 功能介绍/2.2 服务与配置.md` |
 | 文本对话 | ask、文本对话、大模型、LLM、流式、onLLMResponse、Conversation | `e2esdk-docs/2 功能介绍/2.3 文本对话.md` |
 | 语音识别与麦克风 | startASR、stopASR、inputStream、MediaStream、AEC、enable_aec、AudioWorklet、WebCodecs、麦克风、onASRResult | `e2esdk-docs/2 功能介绍/2.4 语音识别与麦克风.md` |
 | 具身智能体播报与 SSML | speak、SSML、播报、流式、口型、字幕 | `e2esdk-docs/2 功能介绍/2.5 具身智能体播报与 SSML.md` |
@@ -74,7 +74,7 @@ license: MIT
 
 | 主题 | 关键词 | 文档路径 |
 |------|--------|----------|
-| 构造参数 | 构造、options、参数、appId、appSecret、gatewayServer、container、asr_config、brain_config、features、agentCallbacks | `e2esdk-docs/3 API参考/3.1 构造参数.md` |
+| 构造参数 | 构造、options、参数、appId、appSecret、gatewayServer、container、asr_id、llm_id、extras、session_speak_req_id、asr_config、brain_config、tts_config、features、agentCallbacks | `e2esdk-docs/3 API参考/3.1 构造参数.md` |
 | 生命周期方法 | init、destroy、生命周期、方法、API | `e2esdk-docs/3 API参考/3.2 生命周期方法.md` |
 | 会话与状态方法 | 会话、getAgentState、getASRState、getStatus、getRenderState、offlineMode、onlineMode、session | `e2esdk-docs/3 API参考/3.3 会话与状态方法.md` |
 | 语音与对话方法 | ask、startASR、stopASR、语音、对话、方法 | `e2esdk-docs/3 API参考/3.4 语音与对话方法.md` |
@@ -82,6 +82,17 @@ license: MIT
 | 回调接口 | 回调、callback、onMessage、agentCallbacks、onAgentStateChange、onASRResult、onLLMResponse | `e2esdk-docs/3 API参考/3.6 回调接口.md` |
 | 错误码 | 错误码、errorCode、code、domain | `e2esdk-docs/3 API参考/3.7 错误码.md` |
 | 类型定义 | 类型、interface、TypeScript、AgentState、AgentError、AgentASRState | `e2esdk-docs/3 API参考/3.8 类型定义.md` |
+
+### 配置附录
+
+先读 `2.2 服务与配置` 了解配置方式和常见场景；需要具体字段、Provider 差异或迁移规则时，读取对应附录。Provider 列表的实际可用性以服务端为准。
+
+| 主题 | 关键词 | 文档路径 |
+|------|--------|----------|
+| ASR 配置参考 | asr_config、provider、base_url、headers、request、xmov、doubao、tencent、xunfei | `e2esdk-docs/7 附录/ASR 配置参考.md` |
+| Brain 配置参考 | brain_config、openai-compatible、模型、智能体、api_key、model、preset、history_length、extra_body | `e2esdk-docs/7 附录/Brain 配置参考.md` |
+| TTS 配置参考 | tts_config、音色、provider、language、speaker_id、tts_speed、pitch、volume、support_emotion、emotion、provider_config、tts_vcn_id、音色迁移 | `e2esdk-docs/7 附录/TTS 配置参考.md` |
+| Features 功能配置参考 | features、auto_send_asr_to_llm、anti_interference、semantic_judge_enabled、vad_merge_mode、volume_and_repetition_text_detection、speech_frontend、enable_aec、enable_speech_separation | `e2esdk-docs/7 附录/Features 功能配置参考.md` |
 
 ### 其他
 

@@ -97,12 +97,29 @@ const agent = new XingyunAvatarAgent({
 | `enableDebugger` | 可选 | 可选 | 不变 |
 | `asr_config` | — | 可选 | 新增（ASR 服务配置） |
 | `brain_config` | — | 可选 | 新增（Brain 服务配置） |
+| `tts_config` | 音色通常在 `config.tts_vcn_id` 中设置 | 可选 | 新接入使用结构化音色配置，迁移后移除旧音色字段 |
 | `features` | — | 可选 | 新增（功能开关） |
 | `e2eServer` / `authToken` | — | 可选 | 新增（私有化 / 调试） |
 | `audio` / `reconnect` | — | 可选 | 新增 |
 | `agentCallbacks` | — | 可选 | 新增（Agent 回调组） |
 
 > 渲染层回调（`onStatusChange`、`onRenderChange`、`onVoiceStateChange`、`onSpeakStateChange`、`onWalkStateChange`、`onWidgetEvent`、`proxyWidget`、`onNetworkInfo`、`onStartSessionWarning`、`onFPSUpdate`）两套 SDK 均挂在构造参数顶层，名称与签名基本一致，可直接沿用。
+
+## 音色配置迁移
+
+旧配置 `config.tts_vcn_id` 仍兼容，新接入建议使用顶层 `tts_config`。迁移时将旧音色标识拆分为 `provider`、`language` 和 `speaker_id`，保留 `config` 中的其他配置，并移除旧的 `tts_vcn_id`，避免同时设置两套音色配置。
+
+例如，`HSPro__zh_mix_zmd_peiluo` 对应：
+
+```javascript
+tts_config: {
+  provider: "HSPro",
+  language: "zh",
+  speaker_id: "mix_zmd_peiluo",
+}
+```
+
+不同 Provider 的拆分规则不同，Azure 保留完整音色名称，XMOV 克隆 ID 保持完整。`tts_config.tts_vcn_id` 不受支持。完整对照表见 [TTS 配置参考](<7 附录/TTS 配置参考.md#8-旧配置迁移>)。
 
 ## 方法对照
 

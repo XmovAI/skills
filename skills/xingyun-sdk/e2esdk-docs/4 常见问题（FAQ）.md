@@ -4,7 +4,7 @@
 
 ## Q: `appId`、`appSecret`、`gatewayServer`、`asr_config`、`brain_config` 从哪里获取？
 
-A: 这几项均为接入前必须拿到的配置，来源如下：
+A: 接入前需要准备应用信息和服务地址；`asr_config`、`brain_config` 为可选服务配置，使用平台已有配置时可以省略。来源如下：
 
 | 配置项 | 类型 | 来源 |
 |--------|------|------|
@@ -14,7 +14,17 @@ A: 这几项均为接入前必须拿到的配置，来源如下：
 | `asr_config` | `Record<string, unknown>` | ASR 语音识别配置，由项目方提供 |
 | `brain_config` | `AgentBrainConfig` | 大模型（Brain）配置，由项目方提供 |
 
-`gatewayServer` 为固定值，直接填写上述地址即可，无需按环境替换。`asr_config`、`brain_config` 为空对象时不会随请求发送，按项目方给定的字段填写即可。
+公共云使用上述 `gatewayServer`；私有化部署按项目提供的地址填写。`asr_config`、`brain_config` 为空对象时不会随请求发送，表示不提供自定义配置。字段和 Provider 清单见 [ASR 配置参考](<7 附录/ASR 配置参考.md>)、[Brain 配置参考](<7 附录/Brain 配置参考.md>)。
+
+## Q: 不配置 TTS 会使用什么音色？自定义音色失败如何检查？
+
+A: 省略 `tts_config` 或传 `{}` 时，按服务端配置使用平台默认音色。自定义音色需要同时填写非空的 `provider`、`language`、`speaker_id`，其中 Provider 区分大小写。检查音色在当前环境中是否可用，以及音色 ID 是否符合该 Provider 的填写规则；不要额外拼接语种前缀，也不要删掉音色 ID 自身包含的前缀。
+
+`tts_config` 与 `appId` 同级，不放在 `config` 内。完整字段、情感和供应商专属参数见 [TTS 配置参考](<7 附录/TTS 配置参考.md>)。
+
+## Q: Features 配置没有生效如何检查？
+
+A: 配置开关使用布尔值，按嵌套对象填写，最终状态以服务端返回的生效配置为准。开启 AEC 时，必须同时设置 `speech_frontend.enabled: true` 和 `speech_frontend.enable_aec: true`；只检查本地请求值不足以确认功能已开启。语义抗干扰、自动提问、片段合并等字段见 [Features 功能配置参考](<7 附录/Features 功能配置参考.md>)。
 
 ## Q: 具身智能体不显示，或者容器塌陷成一根线/一块空白怎么办？
 
@@ -65,7 +75,7 @@ micButton.addEventListener('click', async () => {
 
 ## Q: `init()` 完成后什么时候能开始对话？
 
-A: `await init()` 成功完成时实例已进入 `running` 状态，无需额外的启动步骤，可以直接调用 `ask()`、`speak()`、`startASR()`：
+A: `await init()` 成功完成时实例已进入 `running` 状态，无需额外的启动步骤，可以发起文本交互。`startASR()` 还要求实例可见，并应由用户操作触发；隐身状态下需要先退出隐身，不能仅凭 `running` 判断麦克风可用：
 
 ```javascript
 const agent = new XingyunAvatarAgent({ /* 必填参数见快速开始 */ });
@@ -79,7 +89,7 @@ try {
 }
 ```
 
-以 `await init()` 成功完成或 `getAgentState() === 'running'` 判断可交互。`onDownloadProgress` 达到 100% 仅代表资源下载进度，不能证明 E2E / TTSA 连接均已就绪。`initializing` / `reconnecting` / `stopped` / `failed` / `destroyed` 时禁用新的交互入口。
+以 `await init()` 成功完成或 `getAgentState() === 'running'` 判断 Agent 就绪，启动识别还需检查可见状态。`onDownloadProgress` 达到 100% 仅代表资源下载进度，不能证明 E2E / TTSA 连接均已就绪。`initializing` / `reconnecting` / `stopped` / `failed` / `destroyed` 时禁用新的交互入口。
 
 ## Q: 如何判断「一轮对话」已经完成？
 
@@ -151,13 +161,13 @@ async function switchAvatar(options) {
 
 只需移除 DOM 容器并不会释放资源；离开页面/卸载组件时务必 `await agent.destroy('page_unmount')`。
 
-## Q: `appSecret` 会出现在浏览器里，安全吗？`asr_config`/`brain_config` 能放服务端密钥吗？
+## Q: `appSecret` 会出现在浏览器里，安全吗？服务配置能放供应商密钥吗？
 
 A: `appSecret` 是「浏览器侧凭证」，设计上就要下发给前端，但它仍属于敏感信息，应妥善保管：不要提交到公开代码仓库、不要写进日志、不要跨域暴露。请理解一条边界：**浏览器不是密钥存储**——前端代码、构建产物、localStorage 都能被用户看到或调试出来。
 
 因此：
 
-- 不要在 `asr_config`/`brain_config` 中写入高权限的服务端 API Key，除非项目方明确确认该凭证允许在浏览器使用。
+- 生产环境的 ASR、Brain 和 TTS 供应商凭证优先在星云平台应用管理中配置，避免通过 `asr_config`、`brain_config` 或 `tts_config.provider_config` 暴露在浏览器中。含供应商密钥的代码配置仅用于本地测试或受控私有环境。
 - 高权限密钥应由你的业务服务端持有，由服务端向浏览器下发权限受限的会话配置。`gatewayServer` 只填会话接口地址，不要把签名密钥塞进 URL。
 
 ## Q: 安装时用 `@latest` 还是锁定具体版本？
