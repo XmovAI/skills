@@ -1,7 +1,6 @@
 ---
 name: xingyun-sdk
-description: 魔珐星云具身交互智能体 Web SDK 开发助手，覆盖两套接入入口：端到端 SDK（XingyunAvatarAgent，入口 @xmov/avatar/agent，在渲染之上增加文本对话、ASR 语音识别、LLM Brain、具身智能体播报、对话打断、断线恢复，可闭环实现感知-认知-表达的具身交互智能体）与旧版渲染 SDK（XmovAvatar，入口 @xmov/avatar，负责 WebGL 渲染、SSML 播报、行走动画、关键动作、情绪表情、Widget 组件等）。当用户提到数字人、星云、XmovAvatar、XingyunAvatarAgent、SSML、WebGL 渲染、具身驱动、具身交互智能体、具身智能体、语音识别/ASR、LLM/Brain、虚拟人、数字人 SDK、星云平台、行走动画、关键动作、情绪表情、Widget 组件、隐身模式、客户端打断，或任何魔珐星云 3D 数字人开发、接入、配置、调试、从 XmovAvatar 升级迁移相关内容时，都必须使用此技能，即使用户只是想了解如何接入、如何配置、如何调试数字人应用。
-compatibility: Designed for Claude Code and similar products
+description: 魔珐星云（XmovAI）Web 数字人 SDK 接入、配置、调试与迁移助手。用户提到星云 SDK、XingyunAvatarAgent（@xmov/avatar/agent）或 XmovAvatar（@xmov/avatar）时使用；ASR、LLM、SSML、WebGL、Widget 等问题仅在魔珐星云 SDK 场景下使用。
 license: MIT
 ---
 
@@ -12,16 +11,17 @@ license: MIT
 - **端到端 SDK**（`XingyunAvatarAgent`，入口 `@xmov/avatar/agent`）：新升级的具身交互智能体 SDK，在具身智能体渲染能力之上新增 ASR 语音识别、LLM Brain 文本对话、具身智能体播报、对话打断、状态回调与断线恢复，可闭环完成「感知 → 认知 → 表达」的完整交互。
 - **旧版渲染 SDK**（`XmovAvatar`，入口 `@xmov/avatar`）：负责 WebGL 渲染、SSML 播报、行走动画、关键动作、情绪表情、Widget 组件等纯渲染与驱动能力。
 
-`XingyunAvatarAgent` **继承** `XmovAvatar`，两套 API 高度兼容，详见文档集选择与迁移指南。
+两套入口的部分方法签名和生命周期不同。按实际导入与构造器选择资料，跨入口复用时参考 [SDK 接入约定](references/sdk-usage.md)。
 
 ## 工作流程
 
 当用户提出开发相关问题时：
 
-1. **选择文档集**：按下方「文档集选择（路由）」判断该读 `e2esdk-docs` 还是 `sdk-docs`
-2. **匹配文档索引**：在对应文档集的索引表中，按用户问题关键词找到文档路径
-3. **加载文档**：使用 Read 工具读取文档完整内容（路径相对于技能目录，如 `e2esdk-docs/1 快速接入/1.2 快速开始.md`）
-4. **基于文档回答**：严格依据文档内容回答，不要凭记忆臆断 API、参数或状态取值
+1. **确认入口**：检查项目中的导入路径、构造器或 CDN 文件，判断使用 `XingyunAvatarAgent` 还是 `XmovAvatar`。新项目优先使用端到端入口，CDN 快速接入使用 `xmovAvatar_e2e@latest.js`。
+2. **选择文档集**：按下方「文档集选择（路由）」判断该读 `e2esdk-docs` 还是 `sdk-docs`
+3. **匹配文档索引**：在对应文档集的索引表中，按用户问题关键词找到文档路径
+4. **加载文档**：使用当前环境可用的文件读取工具读取文档完整内容（路径相对于本 SKILL.md 所在目录，不是当前项目工作目录；如 `e2esdk-docs/1 快速接入/1.2 快速开始.md`）
+5. **基于文档回答**：严格依据文档内容回答，不要凭记忆臆断 API、参数或状态取值。使用公开入口与类型；区分 SDK 客户端行为和 provider / 角色支持，源码与类型通过不等于真实服务验收
 
 > 一次只加载当前问题所需的文档，不要一次性加载所有文档。问题涉及多个模块时按需逐个加载。
 
@@ -34,7 +34,7 @@ license: MIT
 
 **默认优先加载 `e2esdk-docs`。** 只有当检测到用户当前代码实现是基于 `XmovAvatar` 构建的，才引用 `sdk-docs`。
 
-**判定「代码基于 XmovAvatar」的信号**（命中任意一条即改用 `sdk-docs`）：
+**判定「代码基于 XmovAvatar」的信号**（优先看实际导入和构造器；网关地址只作辅助）：
 
 - 代码出现 `new XmovAvatar(`，或用 `import XmovAvatar from "@xmov/avatar"`（导入路径不含 `/agent` 后缀）、`<script>` 加载 `xmovAvatar@latest.js`
 - `gatewayServer` 用旧版地址（以 `/user/v1/ttsa/session` 结尾）
@@ -58,15 +58,15 @@ license: MIT
 | 主题 | 关键词 | 文档路径 |
 |------|--------|----------|
 | 连接与生命周期、状态驱动 | 生命周期、init、destroy、getAgentState、getASRState、状态驱动、AgentState、ASRState | `e2esdk-docs/2 功能介绍/2.1 连接与生命周期.md` |
-| 服务与大脑配置 | asr_config、brain_config、大脑、服务配置、provider、e2eServer、authToken、base_url | `e2esdk-docs/2 功能介绍/2.2 服务与大脑配置.md` |
+| 服务与配置、场景接入 | asr_config、brain_config、tts_config、features、平台配置、自动提问、服务配置 | `e2esdk-docs/2 功能介绍/2.2 服务与配置.md` |
 | 文本对话 | ask、文本对话、大模型、LLM、流式、onLLMResponse、Conversation | `e2esdk-docs/2 功能介绍/2.3 文本对话.md` |
-| 语音识别与麦克风 | startASR、stopASR、语音识别、麦克风、ASR、getUserMedia、isFinal、onASRResult | `e2esdk-docs/2 功能介绍/2.4 语音识别与麦克风.md` |
+| 语音识别与麦克风 | startASR、stopASR、inputStream、MediaStream、AEC、enable_aec、AudioWorklet、WebCodecs、麦克风、onASRResult | `e2esdk-docs/2 功能介绍/2.4 语音识别与麦克风.md` |
 | 具身智能体播报与 SSML | speak、SSML、播报、流式、口型、字幕 | `e2esdk-docs/2 功能介绍/2.5 具身智能体播报与 SSML.md` |
 | 打断与状态控制 | 打断、interrupt、状态控制、idle、listen、interactiveidle、enableClientInterrupt | `e2esdk-docs/2 功能介绍/2.6 打断与状态控制.md` |
 | 布局与隐身 | 布局、layout、隐身、invisible、可见、changeLayout、changeAvatarVisible、switchInvisibleMode | `e2esdk-docs/2 功能介绍/2.7 布局与隐身.md` |
 | 动作、行走与表情 | 动作、行走、walk、关键动作、ka、表情、情绪 | `e2esdk-docs/2 功能介绍/2.8 动作、行走与表情.md` |
 | UI 组件（Widget） | Widget、控件、字幕、图片、视频、proxyWidget、onWidgetEvent | `e2esdk-docs/2 功能介绍/2.9 UI 组件（Widget）.md` |
-| 断线重连 | 断线、重连、reconnecting、reconnect、网络 | `e2esdk-docs/2 功能介绍/2.10 断线重连.md` |
+| 断线重连 | 断线、重连、reconnecting、reconnect、service_update、4011、同房迁移 | `e2esdk-docs/2 功能介绍/2.10 断线重连.md` |
 | 调试与监控 | 调试、debug、监控、FPS、网络质量、debugInfo | `e2esdk-docs/2 功能介绍/2.11 调试与监控.md` |
 | 错误处理 | 错误、error、onMessage、agentCallbacks.onError、domain、retryable | `e2esdk-docs/2 功能介绍/2.12 错误处理.md` |
 
@@ -74,7 +74,7 @@ license: MIT
 
 | 主题 | 关键词 | 文档路径 |
 |------|--------|----------|
-| 构造参数 | 构造、options、参数、appId、appSecret、gatewayServer、container、asr_config、brain_config、features、agentCallbacks | `e2esdk-docs/3 API参考/3.1 构造参数.md` |
+| 构造参数 | 构造、options、参数、appId、appSecret、gatewayServer、container、asr_id、llm_id、extras、session_speak_req_id、asr_config、brain_config、tts_config、features、agentCallbacks | `e2esdk-docs/3 API参考/3.1 构造参数.md` |
 | 生命周期方法 | init、destroy、生命周期、方法、API | `e2esdk-docs/3 API参考/3.2 生命周期方法.md` |
 | 会话与状态方法 | 会话、getAgentState、getASRState、getStatus、getRenderState、offlineMode、onlineMode、session | `e2esdk-docs/3 API参考/3.3 会话与状态方法.md` |
 | 语音与对话方法 | ask、startASR、stopASR、语音、对话、方法 | `e2esdk-docs/3 API参考/3.4 语音与对话方法.md` |
@@ -82,6 +82,17 @@ license: MIT
 | 回调接口 | 回调、callback、onMessage、agentCallbacks、onAgentStateChange、onASRResult、onLLMResponse | `e2esdk-docs/3 API参考/3.6 回调接口.md` |
 | 错误码 | 错误码、errorCode、code、domain | `e2esdk-docs/3 API参考/3.7 错误码.md` |
 | 类型定义 | 类型、interface、TypeScript、AgentState、AgentError、AgentASRState | `e2esdk-docs/3 API参考/3.8 类型定义.md` |
+
+### 配置附录
+
+先读 `2.2 服务与配置` 了解配置方式和常见场景；需要具体字段、Provider 差异或迁移规则时，读取对应附录。Provider 列表的实际可用性以服务端为准。
+
+| 主题 | 关键词 | 文档路径 |
+|------|--------|----------|
+| ASR 配置参考 | asr_config、provider、base_url、headers、request、xmov、doubao、tencent、xunfei | `e2esdk-docs/7 附录/ASR 配置参考.md` |
+| Brain 配置参考 | brain_config、openai-compatible、模型、智能体、api_key、model、preset、history_length、extra_body | `e2esdk-docs/7 附录/Brain 配置参考.md` |
+| TTS 配置参考 | tts_config、音色、provider、language、speaker_id、tts_speed、pitch、volume、support_emotion、emotion、provider_config、tts_vcn_id、音色迁移 | `e2esdk-docs/7 附录/TTS 配置参考.md` |
+| Features 功能配置参考 | features、auto_send_asr_to_llm、anti_interference、semantic_judge_enabled、vad_merge_mode、volume_and_repetition_text_detection、speech_frontend、enable_aec、enable_speech_separation | `e2esdk-docs/7 附录/Features 功能配置参考.md` |
 
 ### 其他
 
@@ -139,6 +150,12 @@ license: MIT
 | 主题 | 关键词 | 文档路径 |
 |------|--------|----------|
 | FAQ、接入问题、性能调优、多实例 | FAQ、问题、多实例、内存、卡顿、移动端、微信、初始化失败 | `sdk-docs/4 常见问题（FAQ）— 接入、配置、多实例与性能调优.md` |
+
+## 共享资料边界
+
+- [SDK 接入约定](references/sdk-usage.md)：入口选择、公开类型与核心调用示例。
+- Android 与 SaaS 功能清单是独立资料，不能作为 Web SDK 的接口依据。
+- 回退到渲染资料时仅复用所需的 SSML / 素材说明；生成 Agent 代码仍需复核 `speak`、`interrupt`、隐身和回调签名。
 
 ## 使用示例
 

@@ -21,7 +21,7 @@
 |----|------|-----------|
 | CDN 文件 | `xmovAvatar@latest.js` | `xmovAvatar_e2e@latest.js` |
 | 全局对象 | `window.XmovAvatar` | `window.XingyunAvatarAgent` |
-| npm 包 | 无（仅 CDN） | `@xmov/avatar/agent` |
+| npm 导入入口 | `@xmov/avatar` | `@xmov/avatar/agent`（同一个 npm 包的子路径） |
 
 CDN 引入：
 
@@ -33,7 +33,7 @@ CDN 引入：
 <script src="https://media.xingyun3d.com/xingyun3d/general/litesdk/xmovAvatar_e2e@latest.js"></script>
 ```
 
-新增 npm 引入方式：
+Agent 的 npm 引入方式：
 
 ```ts
 import XingyunAvatarAgent from "@xmov/avatar/agent";
@@ -41,7 +41,7 @@ import XingyunAvatarAgent from "@xmov/avatar/agent";
 
 ## gatewayServer 变化
 
-两套 SDK 的 `gatewayServer` 均为固定值，但**路径不同**，迁移时务必替换：
+公共云默认网关路径不同；私有化部署按服务端约定提供地址：
 
 | 项 | 地址 |
 |----|------|
@@ -67,6 +67,7 @@ const avatar = new XmovAvatar({
 
 // 端到端 SDK
 const agent = new XingyunAvatarAgent({
+  containerId: "",
   container: document.getElementById("avatar-container"),
   appId: "your-app-id",
   appSecret: "your-app-secret",
@@ -90,12 +91,13 @@ const agent = new XingyunAvatarAgent({
 | `appSecret` | 必填 | 必填 | 不变 |
 | `gatewayServer` | 固定 `/ttsa/session` | 固定 `/ttsa_v2/session` | **值变化** |
 | `onMessage` | 必填 | 必填 | 不变（渲染层错误） |
-| `containerId` / `container` | 二选一 | 二选一（条件必填） | 不变 |
+| `containerId` / `container` | TS 要求 `containerId`；运行时优先有效 `container` | 相同 | DOM 写法仍需 `containerId: ""` |
 | `config` | 可选 | 可选 | 不变 |
 | `enableClientInterrupt` | 可选，默认 `false` | 可选，默认 `true` | **默认值变化** |
 | `enableDebugger` | 可选 | 可选 | 不变 |
 | `asr_config` | — | 可选 | 新增（ASR 服务配置） |
 | `brain_config` | — | 可选 | 新增（Brain 服务配置） |
+| `tts_config` | 音色通常在 `config.tts_vcn_id` 中设置 | 可选 | 新接入使用结构化音色配置，迁移后移除旧音色字段 |
 | `features` | — | 可选 | 新增（功能开关） |
 | `e2eServer` / `authToken` | — | 可选 | 新增（私有化 / 调试） |
 | `audio` / `reconnect` | — | 可选 | 新增 |
@@ -103,21 +105,34 @@ const agent = new XingyunAvatarAgent({
 
 > 渲染层回调（`onStatusChange`、`onRenderChange`、`onVoiceStateChange`、`onSpeakStateChange`、`onWalkStateChange`、`onWidgetEvent`、`proxyWidget`、`onNetworkInfo`、`onStartSessionWarning`、`onFPSUpdate`）两套 SDK 均挂在构造参数顶层，名称与签名基本一致，可直接沿用。
 
+## 音色配置迁移
+
+旧配置 `config.tts_vcn_id` 仍兼容，新接入建议使用顶层 `tts_config`。迁移时将旧音色标识拆分为 `provider`、`language` 和 `speaker_id`，保留 `config` 中的其他配置，并移除旧的 `tts_vcn_id`，避免同时设置两套音色配置。
+
+例如，`HSPro__zh_mix_zmd_peiluo` 对应：
+
+```javascript
+tts_config: {
+  provider: "HSPro",
+  language: "zh",
+  speaker_id: "mix_zmd_peiluo",
+}
+```
+
+不同 Provider 的拆分规则不同，Azure 保留完整音色名称，XMOV 克隆 ID 保持完整。`tts_config.tts_vcn_id` 不受支持。完整对照表见 [TTS 配置参考](<7 附录/TTS 配置参考.md#8-旧配置迁移>)。
+
 ## 方法对照
 
 ### 沿用（同名同义）
 
-旧版的方法在端到端 SDK 中基本原样保留，业务无需改动：
+以下为两套入口的常用方法，具体可用性以项目使用的公开声明为准：
 
 | 方法 | 说明 |
 |------|------|
-| `init(params?)` | 初始化 |
 | `destroy(reason?)` | 销毁实例 |
-| `speak(ssml, ...)` | 播报 SSML |
-| `interrupt(type)` | 客户端打断 |
 | `idle()` / `interactiveidle()` / `listen()` | 待机 / 交互待机 / 聆听姿态 |
 | `changeLayout()` / `changeWalkConfig()` | 布局 / 行走配置 |
-| `changeAvatarVisible()` / `switchInvisibleMode()` | 显隐 / 隐身模式 |
+| `changeAvatarVisible()` | 显隐 |
 | `setVolume()` | 音量 |
 | `showDebugInfo()` / `hideDebugInfo()` | 调试面板 |
 | `getStatus()` / `getRenderState()` | 状态查询 |
@@ -128,7 +143,11 @@ const agent = new XingyunAvatarAgent({
 
 | 项 | 旧版 | 端到端 SDK | 迁移动作 |
 |----|------|-----------|---------|
-| `enableClientInterrupt` 默认值 | `false` | `true` | 如需禁用须显式传 `false` |
+| `init()` | `onDownloadProgress` 必填 | 可省略；成功后自动运行 | 等待 `await init()`，不调用受保护的 `start()` |
+| `speak()` | 第四参数为播报关联字段 | 仅三参数；常规返回 `undefined` | 删除第四参数，完成状态改用回调 |
+| `interrupt()` | `interrupt(type)` | `interrupt()` | 删除实参，业务自行记录打断原因 |
+| `switchInvisibleMode()` | 同步返回 | `Promise<void>`；进入隐身会停 ASR | 等待完成；需要语音时重新启动 ASR |
+| `enableClientInterrupt` 默认值 | `false` | `true` | 配置渲染策略；`false` 不会禁用显式 `interrupt()` |
 
 ### 新增方法（端到端能力）
 

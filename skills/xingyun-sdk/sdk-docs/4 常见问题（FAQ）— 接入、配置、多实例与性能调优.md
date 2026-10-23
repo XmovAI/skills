@@ -42,7 +42,7 @@ gatewayServer: 'https://nebula-agent.xingyun3d.com/user/v1/ttsa/session'
 
 | 问题 | 说明 | 解决方案 |
 |-|-|-|
-| 音频自动播放 | iOS 要求用户交互后才能播放音频 | 在用户点击后调用 `init()` 和 `start()` |
+| 音频自动播放 | iOS 要求用户交互后才能播放音频 | 在用户点击后调用 `init()`，并等待初始化完成 |
 | WebGL 性能 | 移动端 GPU 性能有限 | 降低分辨率，使用 `raw_audio: true` |
 | 后台切换 | 切到后台时 WebGL 上下文可能丢失 | 监听 `visibilitychange` 使用隐身模式 |
 | 内存限制 | 移动端内存有限 | 及时 `destroy()`，避免多实例 |
@@ -75,7 +75,7 @@ async function switchAvatar(newConfig) {
   }
   currentAvatar = new XmovAvatar(newConfig);
   await currentAvatar.init();
-  currentAvatar.start();
+  // init() 完成后自动运行；start() 是受保护方法，不由业务调用。
 }
 ```
 
